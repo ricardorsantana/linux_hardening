@@ -19,13 +19,7 @@ Este script bash para automatizar a aplicação de hardening em servidores Linux
   cd linux_hardening
 ```
 
-4. Ajuste a permissão do script:
-
-```bash
-  chmod +x linux_hardening.sh
-```
-
-4. Execute o script:
+3. Execute o script:
 
 ```bash
   ./linux_hardening.sh
