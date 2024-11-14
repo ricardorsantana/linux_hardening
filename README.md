@@ -10,7 +10,7 @@ Este script bash para automatizar a aplicação de hardening em servidores Linux
 1. Clone o repositório:
 
 ```bash
-  git clone https://
+  git clone https://github.com/ricardorsantana/linux_hardening.git
 ```
 
 2. Acesse o diretório:
