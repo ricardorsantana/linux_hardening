@@ -56,20 +56,21 @@ if [ -d /home -a -d /var -a -d /usr ]; then
   echo "O particionamento do disco já foi feito"
 else
   echo "O particionamento do disco não foi feito ou está incompleto"
-fi
+
 sudo fdisk /dev/sda
 sudo mkfs.ext4 /dev/sda1
 sudo mkswap /dev/sda2
 sudo swapon /dev/sda2
 sudo mount /dev/sda1 /mnt
-echo
- 
+echo ""
+fi
+
 # Passo 5: Bloquear o diretório de boot
 echo -e "\e[33mPasso 5: Bloquear o diretório de boot\e[0m"
 echo "Bloqueando o diretório de boot..."
 sudo chmod 700 /boot
 echo ""
- 
+
 # Passo 6: Desativar o uso de USB
 echo -e "\e[33mPasso 6: Desativar o uso de USB\e[0m"
 echo "Desativando o uso de USB..."
@@ -95,7 +96,7 @@ echo ""
 echo -e "\e[33mPasso 10: Reforçar a segurança do SSH\e[0m"
 sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' /etc/ssh/sshd_config
 sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
-sudo systemctl restart sshd
+sudo systemctl restart ssh
 echo
  
 # Passo 11: Ativar o SELinux
@@ -163,7 +164,7 @@ echo -e "\e[33mPasso 18: Limitar o acesso root usando o SUDO\e[0m"
 echo "Limitando o acesso root usando o SUDO..."
 sudo apt-get install sudo -y
 sudo groupadd admin
-sudo usermod -a -G admin "$(whoami)"
+sudo usermod -aG admin "$(whoami)"
 sudo sed -i 's/%sudo\tALL=(ALL:ALL) ALL/%admin\tALL=(ALL:ALL) ALL/g' /etc/sudoers
 echo ""
  
@@ -184,11 +185,11 @@ echo -e "\e[33mPasso 20: Configurações básicas de acesso remoto e SSH\e[0m"
 echo "Desabilitando o login root via SSH..."
 sudo sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 echo "Desabilitando autenticação por senha via SSH..."
-sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+etsudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
 echo "Desabilitando o encaminhamento X11 via SSH..."
 sudo sed -i 's/X11Forwarding yes/X11Forwarding no/g' /etc/ssh/sshd_config
 echo "Recarregando o serviço SSH..."
-sudo systemctl reload sshd
+sudo systemctl reload ssh
 echo ""
  
 # Passo 21: Desabilitar o Xwindow
@@ -235,7 +236,7 @@ echo ""
  
 # Passo 26: Detecção de rootkits
 echo -e "\e[33mPasso 26: Instalando e executando a detecção de rootkits...\e[0m"
-sudo apt-get install rkhunter
+sudo apt-get install rkhunter -y
 sudo rkhunter --update
 sudo rkhunter --propupd
 sudo rkhunter --check
