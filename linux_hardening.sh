@@ -22,7 +22,7 @@ echo ""
 if [[ $EUID -ne 0 ]]; then
    echo ""
    echo "Este script deve ser executado como root" 1>&2
-   echo "Tente sudo './linux_hardening.sh' "
+   echo "Tente 'sudo ./linux_hardening.sh' "
    echo ""
    exit 1
 fi
@@ -271,6 +271,7 @@ echo -e "\e[33mPasso 29: Adicionando Banner no Login...\e[0m"
 sudo sed -i 's/#Banner none/Banner \/etc\/nano_banner/g' /etc/ssh/sshd_config
 sudo mv nano_banner /etc/nano_banner
 sudo systemctl restart ssh
+cat /etc/nano_banner
 echo ""
 
 ## Passo 30: Ativar autenticação de dois fatores
