@@ -20,7 +20,10 @@ echo ""
 
 # Garanta que o script seja executado como root
 if [[ $EUID -ne 0 ]]; then
+   echo ""
    echo "Este script deve ser executado como root" 1>&2
+   echo "Tente sudo './linux_hardening.sh' "
+   echo ""
    exit 1
 fi
 
@@ -33,7 +36,7 @@ echo "Distribuição: $(lsb_release -d | cut -f2)"
 echo "Informações da CPU: $(lscpu | grep 'Modelo')"
 echo "Informações de memória: $(free -h | awk '/Mem/{print $2}')"
 echo "Informações do disco: $(lsblk | grep disco)"
-echo
+echo ""
  
 # Passo 2: Proteção do BIOS
 echo -e "\e[33mPasso 2: Proteção do BIOS\e[0m"
@@ -103,7 +106,7 @@ echo -e "\e[33mPasso 10: Reforçar a segurança do SSH\e[0m"
 sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' /etc/ssh/sshd_config
 sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
 sudo systemctl restart ssh
-echo
+echo ""
  
 # Passo 11: Ativar o SELinux
 echo -e "\e[33mPasso 11: Ativar o SELinux\e[0m"
@@ -272,4 +275,11 @@ echo ""
 
 ## Passo 30: Ativar autenticação de dois fatores
 #echo -e "\e[33mPasso 30: Ativar autenticação de dois fatores\e[0m"
-#echo "Instalan
+#echo "Instalando o Google Authenticator para autenticação de dois fatores..."
+#sudo apt-get install libpam-google-authenticator -y
+#echo "Ativando autenticação de dois fatores..."
+#sudo google-authenticator
+#echo "Editando as configurações do PAM para autenticação de dois fatores..."
+#sudo sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
+#sudo sed -i 's/UsePAM no/UsePAM yes/g' /etc/ssh/sshd_config
+#sudo sed -i 's/#auth required pam_google_authenticator.so/auth required 
