@@ -18,6 +18,12 @@ echo "==================================================="
 echo ""
 echo ""
 
+# Garanta que o script seja executado como root
+if [[ $EUID -ne 0 ]]; then
+   echo "Este script deve ser executado como root" 1>&2
+   exit 1
+fi
+
 echo "Aplicando o Hardening ao Sistema Linux Ubuntu/Debian..."
 # Passo 1: Documentar as informações do host
 echo -e "\e[33mPasso 1: Documentando as informações do host\e[0m"
@@ -240,21 +246,30 @@ sudo apt-get install rkhunter -y
 sudo rkhunter --update
 sudo rkhunter --propupd
 sudo rkhunter --check
-echo
+echo ""
  
 # Passo 27: Monitorar logs do sistema
 echo -e "\e[33mPasso 27: Monitorar logs do sistema\e[0m"
 echo "Instalando logwatch para monitoramento de logs do sistema..."
 sudo apt-get install logwatch -y
 echo ""
- 
-## Passo 28: Ativar autenticação de dois fatores
-#echo -e "\e[33mPasso 28: Ativar autenticação de dois fatores\e[0m"
-#echo "Instalando o Google Authenticator para autenticação de dois fatores..."
-#sudo apt-get install libpam-google-authenticator -y
-#echo "Ativando autenticação de dois fatores..."
-#sudo google-authenticator
-#echo "Editando as configurações do PAM para autenticação de dois fatores..."
-#sudo sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
-#sudo sed -i 's/UsePAM no/UsePAM yes/g' /etc/ssh/sshd_config
-#sudo sed -i 's/#auth required pam_google_authenticator.so/auth required 
+
+# Passo 28: Ajustando Timezone e NTP
+echo -e "\e[33mPasso 28: Ajustando a Localidade Timezone e NTP do Sistema...\e[0m"
+sudo locale-gen pt_BR.UTF-8
+sudo timedatectl set-timezone "America/Sao_Paulo"
+sudo sed -i 's/#NTP=/NTP=a.st1.ntp.br/g' /etc/systemd/timesyncd.conf
+sudo sed -i 's/#FallbackNTP=ntp.ubuntu.com/NTP=a.ntp.br/g' /etc/systemd/timesyncd.conf
+sudo systemctl restart systemd-timesyncd.service
+echo ""
+
+# Passo 29: Adicionando Banner no Login
+echo -e "\e[33mPasso 29: Adicionando Banner no Login...\e[0m"
+sudo sed -i 's/#Banner none/Banner \/etc\/nano_banner/g' /etc/ssh/sshd_config
+sudo mv nano_banner /etc/nano_banner
+sudo systemctl restart ssh
+echo ""
+
+## Passo 30: Ativar autenticação de dois fatores
+#echo -e "\e[33mPasso 30: Ativar autenticação de dois fatores\e[0m"
+#echo "Instalan
